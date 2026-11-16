@@ -80,3 +80,28 @@ pm2 status
 pm2 logs devfitness-api
 pm2 restart devfitness-api
 ```
+
+## AWS EC2 deployment
+
+AWS-specific scripts support Ubuntu 22.04/24.04 and Amazon Linux 2023:
+
+```bash
+curl -fsSLO https://raw.githubusercontent.com/bhardwaaj/devFitness/main/scripts/aws-install.sh
+chmod +x aws-install.sh
+./aws-install.sh
+
+curl -fsSLO https://raw.githubusercontent.com/bhardwaaj/devFitness/main/scripts/aws-run-backend.sh
+chmod +x aws-run-backend.sh
+./aws-run-backend.sh
+```
+
+The installation script installs Node.js 22, Git, compiler tools, and PM2. The run script clones
+or updates the repository, creates a protected environment file, starts the backend, enables PM2
+after reboot, verifies `/health`, and prints the EC2 API URL.
+
+After deployment:
+
+- Add the EC2 public IP to MongoDB Atlas Network Access.
+- Allow inbound TCP `3000` in the EC2 Security Group while testing.
+- Use HTTPS through an Application Load Balancer or Nginx before production use.
+- Set the Android `API_BASE_URL` to the final HTTPS backend address and rebuild the APK.
