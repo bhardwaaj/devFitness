@@ -22,8 +22,17 @@ case "${ID:-}" in
       $SUDO apt-get install -y nodejs
     fi
     ;;
-  amzn|rhel|rocky|almalinux|fedora)
-    echo "Installing requirements on Amazon Linux/RHEL…"
+  amzn)
+    echo "Installing requirements on Amazon Linux…"
+    # Amazon Linux 2023 ships curl-minimal. Installing the full curl package conflicts with it.
+    $SUDO dnf install -y ca-certificates curl-minimal git gcc-c++ make openssl
+    if ! command -v node >/dev/null 2>&1 || (( $(node -p 'Number(process.versions.node.split(".")[0])') < 20 )); then
+      curl -fsSL https://rpm.nodesource.com/setup_22.x | $SUDO -E bash -
+      $SUDO dnf install -y nodejs
+    fi
+    ;;
+  rhel|rocky|almalinux|fedora)
+    echo "Installing requirements on RHEL-compatible Linux…"
     $SUDO dnf install -y ca-certificates curl git gcc-c++ make openssl
     if ! command -v node >/dev/null 2>&1 || (( $(node -p 'Number(process.versions.node.split(".")[0])') < 20 )); then
       curl -fsSL https://rpm.nodesource.com/setup_22.x | $SUDO -E bash -
