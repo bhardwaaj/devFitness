@@ -1,6 +1,6 @@
-// Creates or updates the admin account in Atlas.
+// Creates or updates the admin account in the configured MongoDB database.
 // Usage: ADMIN_EMAIL=... ADMIN_PASSWORD=... [ADMIN_NAME=...] npm run seed:admin
-// Atlas credentials are read from ../secrets.properties (MONGODB_HOST, MONGODB_USER, MONGODB_PASSWORD).
+// Prefer MONGODB_URI. Legacy Atlas credentials can still be read from ../secrets.properties.
 // Password hashing must stay identical to AuthStore.kt: PBKDF2-HMAC-SHA256, 12000 iterations, 32-byte key, hex salt.
 
 const crypto = require("crypto");
@@ -13,6 +13,7 @@ const ITERATIONS = 12000;
 function readSecrets() {
   const file = path.resolve(__dirname, "..", "..", "secrets.properties");
   const values = {};
+  if (!fs.existsSync(file)) return values;
   for (const line of fs.readFileSync(file, "utf8").split(/\r?\n/)) {
     const trimmed = line.trim();
     if (!trimmed || trimmed.startsWith("#")) continue;
@@ -37,14 +38,17 @@ async function main() {
   }
 
   const secrets = readSecrets();
-  const uri =
-    `mongodb+srv://${encodeURIComponent(secrets.MONGODB_USER)}:${encodeURIComponent(secrets.MONGODB_PASSWORD)}` +
-    `@${secrets.MONGODB_HOST}/?retryWrites=true&w=majority&appName=DevFitnessSeed`;
+  const legacyUri = secrets.MONGODB_HOST && secrets.MONGODB_USER && secrets.MONGODB_PASSWORD
+    ? `mongodb+srv://${encodeURIComponent(secrets.MONGODB_USER)}:${encodeURIComponent(secrets.MONGODB_PASSWORD)}` +
+      `@${secrets.MONGODB_HOST}/?retryWrites=true&w=majority&appName=DevFitnessSeed`
+    : "";
+  const uri = process.env.MONGODB_URI || legacyUri;
+  if (!uri) throw new Error("Set MONGODB_URI.");
 
   const client = new MongoClient(uri, { serverSelectionTimeoutMS: 15000 });
   await client.connect();
   try {
-    const users = client.db("devfitness").collection("users");
+    const users = client.db(process.env.MONGODB_DB || "devfitness").collection("users");
     await users.createIndex({ email: 1 }, { unique: true });
 
     const salt = crypto.randomBytes(16).toString("hex");

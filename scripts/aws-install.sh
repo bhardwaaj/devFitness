@@ -16,7 +16,7 @@ case "${ID:-}" in
   ubuntu|debian)
     echo "Installing requirements on Ubuntu/Debian…"
     $SUDO apt-get update
-    $SUDO apt-get install -y ca-certificates curl git build-essential openssl
+    $SUDO apt-get install -y ca-certificates curl git build-essential openssl gnupg
     if ! command -v node >/dev/null 2>&1 || (( $(node -p 'Number(process.versions.node.split(".")[0])') < 20 )); then
       curl -fsSL https://deb.nodesource.com/setup_22.x | $SUDO -E bash -
       $SUDO apt-get install -y nodejs
@@ -46,8 +46,44 @@ case "${ID:-}" in
     ;;
 esac
 
+echo "Installing MongoDB Community Server 8.0…"
+case "${ID:-}" in
+  amzn)
+    cat <<'EOF' | $SUDO tee /etc/yum.repos.d/mongodb-org-8.0.repo >/dev/null
+[mongodb-org-8.0]
+name=MongoDB Repository
+baseurl=https://repo.mongodb.org/yum/amazon/2023/mongodb-org/8.0/x86_64/
+gpgcheck=1
+enabled=1
+gpgkey=https://pgp.mongodb.com/server-8.0.asc
+EOF
+    $SUDO dnf install -y mongodb-org
+    ;;
+  ubuntu|debian)
+    curl -fsSL https://www.mongodb.org/static/pgp/server-8.0.asc |
+      $SUDO gpg --dearmor --yes -o /usr/share/keyrings/mongodb-server-8.0.gpg
+    echo "deb [arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-8.0.gpg] https://repo.mongodb.org/apt/ubuntu ${VERSION_CODENAME}/mongodb-org/8.0 multiverse" |
+      $SUDO tee /etc/apt/sources.list.d/mongodb-org-8.0.list >/dev/null
+    $SUDO apt-get update
+    $SUDO apt-get install -y mongodb-org
+    ;;
+  rhel|rocky|almalinux|fedora)
+    cat <<'EOF' | $SUDO tee /etc/yum.repos.d/mongodb-org-8.0.repo >/dev/null
+[mongodb-org-8.0]
+name=MongoDB Repository
+baseurl=https://repo.mongodb.org/yum/redhat/9/mongodb-org/8.0/x86_64/
+gpgcheck=1
+enabled=1
+gpgkey=https://pgp.mongodb.com/server-8.0.asc
+EOF
+    $SUDO dnf install -y mongodb-org
+    ;;
+esac
+$SUDO systemctl enable --now mongod
+
 echo "Installing PM2 process manager…"
-$SUDO npm install --global pm2
+$SUDO env NPM_CONFIG_USERCONFIG=/dev/null NPM_CONFIG_REGISTRY=https://registry.npmjs.org \
+  npm install --global pm2
 
 echo
 echo "AWS server requirements installed successfully."
@@ -55,6 +91,7 @@ echo "Node: $(node --version)"
 echo "npm:  $(npm --version)"
 echo "Git:  $(git --version)"
 echo "PM2:  $(pm2 --version)"
+echo "MongoDB: $(mongod --version | head -n 1)"
 echo
-echo "MongoDB Atlas is remote; MongoDB is intentionally not installed on this EC2 instance."
+echo "MongoDB is running locally and will be secured during backend setup."
 echo "Next command: ./scripts/aws-run-backend.sh"

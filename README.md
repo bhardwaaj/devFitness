@@ -95,13 +95,14 @@ chmod +x aws-run-backend.sh
 ./aws-run-backend.sh
 ```
 
-The installation script installs Node.js 22, Git, compiler tools, and PM2. The run script clones
-or updates the repository, creates a protected environment file, starts the backend, enables PM2
-after reboot, verifies `/health`, and prints the EC2 API URL.
+The installation script installs Node.js 22, Git, MongoDB Community Server, compiler tools, and
+PM2. The run script creates a restricted local MongoDB user, enables database authentication,
+seeds the admin account, starts the backend, enables PM2 after reboot, verifies `/health`, and
+prints the EC2 API URL. Database and admin passwords are requested securely and are never committed.
 
 After deployment:
 
-- Add the EC2 public IP to MongoDB Atlas Network Access.
 - Allow inbound TCP `3000` in the EC2 Security Group while testing.
+- Do not expose MongoDB port `27017`; only the backend should access the local database.
 - Use HTTPS through an Application Load Balancer or Nginx before production use.
 - Set the Android `API_BASE_URL` to the final HTTPS backend address and rebuild the APK.
