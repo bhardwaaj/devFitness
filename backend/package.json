@@ -1,0 +1,20 @@
+{
+  "name": "devfitness-backend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "DEV Fitness Club API and admin tooling",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "seed:admin": "node scripts/seed-admin.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.10.0",
+    "socket.io": "^4.8.1"
+  }
+}

@@ -1,0 +1,53 @@
+<resources>
+    <string name="app_name">DEV Fitness Club</string>
+    <string name="tagline">Train like you ship.</string>
+    <string name="welcome_back">Welcome back</string>
+    <string name="sign_in_subtitle">Sign in and get under the bar.</string>
+    <string name="email">Email</string>
+    <string name="email_placeholder">you@gym.dev</string>
+    <string name="password">Password</string>
+    <string name="password_placeholder">Your password</string>
+    <string name="sign_in">Sign In</string>
+    <string name="new_here">New to DevFitness?</string>
+    <string name="create_account">Create account</string>
+    <string name="create_account_title">Create account</string>
+    <string name="create_subtitle">A locker, a plan, and a reason to show up.</string>
+    <string name="name">Name</string>
+    <string name="name_placeholder">Your name</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="confirm_placeholder">Repeat password</string>
+    <string name="join">Join DevFitness</string>
+    <string name="have_account">Already training?</string>
+    <string name="sign_in_link">Sign in</string>
+    <string name="password_hint">At least 6 characters.</string>
+    <string name="checking_in">Checking you in</string>
+    <string name="setting_locker">Setting up your locker</string>
+    <string name="welcome_back_title">Welcome back</string>
+    <string name="youre_in">You\'re in</string>
+    <string name="session_ready">Your session is ready.</string>
+    <string name="welcome_name">Welcome, %1$s.</string>
+    <string name="couldnt_sign_in">Couldn\'t sign in</string>
+    <string name="couldnt_register">Couldn\'t create account</string>
+    <string name="try_again">Try again</string>
+    <string name="invalid_credentials">That email and password don\'t match.</string>
+    <string name="email_taken">An account with this email already exists.</string>
+    <string name="err_network">Can\'t reach the DEV Fitness server. Check your connection and try again.</string>
+    <string name="err_db_config">The DEV Fitness server URL is not configured.</string>
+    <string name="err_account_inactive">This account is inactive. Contact the gym administrator.</string>
+    <string name="err_email_required">Enter your email.</string>
+    <string name="err_email_invalid">That email looks off.</string>
+    <string name="err_password_required">Enter your password.</string>
+    <string name="err_name">Enter your name.</string>
+    <string name="err_password_short">Use at least 6 characters.</string>
+    <string name="err_password_match">Passwords don\'t match.</string>
+    <string name="account_created_banner">Account created. Sign in to start.</string>
+    <string name="show_password">Show password</string>
+    <string name="hide_password">Hide password</string>
+    <string name="back">Back</string>
+    <string name="logo">DEV Fitness Club</string>
+    <string-array name="lift_phrases">
+        <item>Racking the bar</item>
+        <item>Clipping the plates</item>
+        <item>Warming up</item>
+    </string-array>
+</resources>
